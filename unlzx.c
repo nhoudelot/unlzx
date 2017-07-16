@@ -707,7 +707,7 @@ int extract_normal(FILE *in_file)
     if(source >= source_end) /* have we exhausted the current read buffer? */
     {
      temp = read_buffer;
-     if(count = temp - source + 16384)
+     if(count == temp - source + 16384)
      {
       do /* copy the remaining overrun to the start of the buffer */
       {
@@ -744,7 +744,7 @@ int extract_normal(FILE *in_file)
 /* unpack some data */
     if(destination >= decrunch_buffer + 258 + 65536)
     {
-     if(count = destination - decrunch_buffer - 65536)
+     if(count == destination - decrunch_buffer - 65536)
      {
       temp = (destination = decrunch_buffer) + 65536;
       do /* copy the overrun to the start of the buffer */
@@ -931,14 +931,14 @@ int extract_archive(FILE *in_file)
           pack_mode = archive_header[11]; /* pack mode */
           crc = (archive_header[25] << 24) + (archive_header[24] << 16) + (archive_header[23] << 8) + archive_header[22]; /* data crc */
 
-          if(node = (struct filename_node *)malloc(sizeof(struct filename_node))) /* allocate a filename node */
+          if(node == (struct filename_node *)malloc(sizeof(struct filename_node))) /* allocate a filename node */
           {
            *filename_next = node; /* add this node to the list */
            filename_next = &(node->next);
            node->next = 0;
            node->length = unpack_size;
            node->crc = crc;
-           for(temp = 0; node->filename[temp] = header_filename[temp]; temp++);
+           for(temp = 0; (node->filename[temp] = header_filename[temp]); temp++);
 
            if(pack_size)
            {
@@ -963,7 +963,7 @@ int extract_archive(FILE *in_file)
             if(abort) break; /* a read error occured */
 
             temp_node = filename_list; /* free the list now */
-            while(node = temp_node)
+            while(node == temp_node)
             {
              temp_node = node->next;
              free(node);
@@ -1012,7 +1012,7 @@ int extract_archive(FILE *in_file)
 
 /* free the filename list in case an error occured */
  temp_node = filename_list;
- while(node = temp_node)
+ while(node == temp_node)
  {
   temp_node = node->next;
   free(node);
@@ -1090,13 +1090,13 @@ int view_archive(FILE *in_file)
           total_files++;
           merge_size += unpack_size;
 
-          printf("%8ld ", unpack_size);
+          printf("%8ld ", (long int)unpack_size);
           if(archive_header[12] & 1)
            printf("     n/a ");
           else
-           printf("%8ld ", pack_size);
-          printf("%02ld:%02ld:%02ld ", hour, minute, second);
-          printf("%2ld-%s-%4ld ", day, month_str[month], year);
+           printf("%8ld ", (long int)pack_size);
+          printf("%02ld:%02ld:%02ld ", (long int)hour, (long int)minute, (long int)second);
+          printf("%2ld-%s-%4ld ", (long int)day, month_str[month], (long int)year);
           printf("%c%c%c%c%c%c%c%c ",
                  (attributes & 32) ? 'h' : '-',
                  (attributes & 64) ? 's' : '-',
@@ -1111,7 +1111,7 @@ int view_archive(FILE *in_file)
            printf(": \"%s\"\n", header_comment);
           if((archive_header[12] & 1) && pack_size)
           {
-           printf("%8ld %8ld Merged\n", merge_size, pack_size);
+           printf("%8ld %8ld Merged\n", (long int)merge_size, (long int)pack_size);
           }
 
           if(pack_size) /* seek past the packed data */
@@ -1148,8 +1148,8 @@ int view_archive(FILE *in_file)
    else
    {
     printf("-------- -------- -------- ----------- -------- ----\n");
-    printf("%8ld %8ld ", total_unpack, total_pack);
-    printf("%ld file%s\n", total_files, ((total_files == 1) ? "" : "s"));
+    printf("%8ld %8ld ", (long int)total_unpack, (long int)total_pack);
+    printf("%ld file%s\n", (long int)total_files, (((long int)total_files == 1) ? "" : "s"));
 
     result = 0; /* normal termination */
    }
